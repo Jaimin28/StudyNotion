@@ -1,4 +1,4 @@
-const Tag = require("../models/tags");
+const Category = require("../models/category");
 const Course = require("../models/Course");
 const User = require("../models/User");
 const {imageUploadToCloudinary} = require("../utils/imageUploader");
@@ -6,10 +6,10 @@ const {imageUploadToCloudinary} = require("../utils/imageUploader");
 exports.createCourse = async (req,res) =>{
     try {
         // fetch the data from req body
-        const {courseName, courseDescription, WhatYouWillLearn,price,tag} = req.body;
+        const {courseName, courseDescription, WhatYouWillLearn,price,category} = req.body;
 
         // validation
-        if(!courseName || !courseDescription || !WhatYouWillLearn || !price || !tag){
+        if(!courseName || !courseDescription || !WhatYouWillLearn || !price || !category){
             return res.status(401).json({
                 success:false,
                 message:"All feilds are Required"
@@ -30,7 +30,7 @@ exports.createCourse = async (req,res) =>{
             })
         }
         // fetch tag details from db on the basis of tag id
-        const tagDetails = await Tag.findById(tag);
+        const categoryDetails = await Category.findById(category);
         // validate tag
         if(!tag){
             return res.status(403).json({
@@ -47,7 +47,7 @@ exports.createCourse = async (req,res) =>{
             Instructor:instructorDetails._id,
             WhatYouWillLearn,
             price,
-            tag:tagDetails._id,
+            category:categoryDetails._id,
             thumbnail:thumbnailImage.secure_url
         })
         
