@@ -104,13 +104,14 @@ exports.signUp = async (req, res) => {
     const recentOtp = await OTP.find({ email })
       .sort({ createdAt: -1 })
       .limit(1);
-    if (recentOtp.length() == 0) {
+    if (recentOtp.length == 0) {
       return res.status(400).json({
         success: false,
         message: "Otp does not found",
       });
     }
     // validate otp
+    // else if(otp! == response[0].otp)
     else if (otp !== recentOtp) {
       return res.status(400).json({
         success: false,
@@ -119,6 +120,9 @@ exports.signUp = async (req, res) => {
     }
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    // create user
+    let approved ="";
+    approved === "Instructor" ? (approved=false) : (approved = true);
 
     // create a profile entry for user
 
@@ -137,6 +141,7 @@ exports.signUp = async (req, res) => {
       password: hashedPassword,
       accountType,
       contactNumber,
+      approved:approved,
       additionalDetails: profileDetails._id,
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstname} ${lastname}`,
     });
