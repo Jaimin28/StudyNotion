@@ -100,4 +100,76 @@ exports.verifySignature = async (req,res) =>{
 
     const shasum = crypto.createHmac("sha256",webhookSecret);
     shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest("hex");
+
+    if(signature == digest){
+        console.log("Payment is authorized");
+
+        const {courseId,userId} = req.body.payload.payment.entity.notes;
+
+        try {
+            // fecth the course and enrolled student into 
+            const enrolledCourse = await Course.findOneAndUpdate({_id:courseId},
+                                                                {
+                                                                    $push:{
+                                                                        StudentsEnrolled:userId,
+                                                                    }
+                                                                },{new:true},
+            )
+            if(!enrolledCourse){
+                return res.status(403).json({
+                    success:false,
+                    message:"Course not found"
+                })
+            }
+            console.log(enrolledCourse);
+            
+
+            // find the student add course into courselist
+
+            const  enrolledUser = await User.findOneAndUpdate({_id:userId},
+                                                                    {
+                                                                        $push:{
+                                                                            courses:courseId
+                                                                        }
+                                                                    },{new:true}
+            );
+            console.log(enrolledUser);
+            
+            if(!enrolledUser){
+                return res.status(403).json({
+                    success:false,
+                    message:"User not found"
+                })
+            }
+
+            // mail send for confirmation
+
+            const emailResponse = await mailSender(
+                                        enrolledUser.email,
+                                        "Congratulation from StudyNotion",
+                                        "Congratulation,you are onboard into new StudyNotion course"
+            );
+            console.log(emailResponse);
+            return res.status(200).json({
+                success:true,
+                message:"Signature verified and course added to your list"
+            })
+            
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                success:false,
+                message:error.message
+            })
+            
+        }
+        
+    }
+    else {
+        return res.status(400).json({
+            success:false,
+            message:"invalid request"
+        })
+    }
 }
