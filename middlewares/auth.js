@@ -27,6 +27,8 @@ exports.auth=async (req,res,next) =>{
                 message:"token is invalid"
             })
         }
+        // If JWT is valid, move on to the next middleware or request handler
+		next();
     } catch (error) {
         console.error(error);
         return res.status(400),json({
@@ -47,6 +49,8 @@ exports.isStudent = async (req,res,next) => {
                 message:"This is protected routes for student only"
             })
         }
+        // If JWT is valid, move on to the next middleware or request handler
+		next();
     } catch (error) {
         return res.status(500).json({
             success:false,
@@ -65,6 +69,8 @@ exports.isInstructor = async (req,res,next) => {
                 message:"This is protected routes for Instructor only"
             })
         }
+        // If JWT is valid, move on to the next middleware or request handler
+		next();
     } catch (error) {
         return res.status(500).json({
             success:false,
@@ -84,6 +90,8 @@ exports.isAdmin = async (req,res,next) => {
                 message:"This is protected routes for Admin only"
             })
         }
+        // If JWT is valid, move on to the next middleware or request handler
+		next();
     } catch (error) {
         return res.status(500).json({
             success:false,
