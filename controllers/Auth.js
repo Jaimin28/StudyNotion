@@ -4,6 +4,7 @@ const OtpGenerator = require("otp-generator");
 const brcypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const { passwordUpdate } = require("../mail/templates/passwordUpdate");
 // send otp controller
 
 exports.SendOtp = async (req, res) => {
@@ -121,8 +122,8 @@ exports.signUp = async (req, res) => {
     // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     // create user
-    let approved ="";
-    approved === "Instructor" ? (approved=false) : (approved = true);
+    let approved = "";
+    approved === "Instructor" ? (approved = false) : (approved = true);
 
     // create a profile entry for user
 
@@ -141,7 +142,7 @@ exports.signUp = async (req, res) => {
       password: hashedPassword,
       accountType,
       contactNumber,
-      approved:approved,
+      approved: approved,
       additionalDetails: profileDetails._id,
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstname} ${lastname}`,
     });
@@ -222,25 +223,63 @@ exports.Login = async (req, res) => {
   }
 };
 
-
-
 // change password
 
-exports.changePassword = async (req,res)=>{
-    // get the data from req body
-    const {newPasswor,email} = req.body;
+exports.changePassword = async (req, res) => {
+  try {
+    // get user details
+    const userDetails = await User.findById(req.user.id);
 
-    // get old password,new password,confirmnewpassword
-    const user = await User.findOne({email});
-     
-    // validation
-    if(!user){
-      return res.status(401).json({
-        success:false,
-        message:"User with this email is not found"
-      })
+    // get old and new password and confirm password from req body
+    const { oldPassword, newPassword } = req.body;
+
+    // validate old password
+    const validatePassword = await brcypt.compare(
+      oldPassword,
+      userDetails.password
+    );
+
+    if (!validatePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Old password does not match",
+      });
     }
-    // update and pwd in db
-    // send mail -password update
-    // return response
-}
+
+    // update password
+    const encryptPassword = await brcypt.hash(newPassword, 10);
+    const userUpdateDetails = await User.findByIdAndUpdate(
+      req.user.id,
+      { password: encryptPassword },
+      { new: true }
+    );
+
+    // send mail notification
+    try {
+      const emailResponse = await passwordUpdate(
+        userDetails.email,
+        userDetails.name
+      );
+      console.log("Email sent Successfull", emailResponse);
+    } catch (error) {
+      console.error("Error occurred while sending email:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error occurred while sending email",
+        error: error.message,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    // If there's an error updating the password, log the error and return a 500 (Internal Server Error) error
+    console.error("Error occurred while updating password:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error occurred while updating password",
+      error: error.message,
+    });
+  }
+};
