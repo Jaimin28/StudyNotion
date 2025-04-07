@@ -1,10 +1,13 @@
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 const OtpGenerator = require("otp-generator");
-const brcypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { passwordUpdate } = require("../mail/templates/passwordUpdate");
+const mailSender = require("../utils/mailSender");
+const {otpTemplate} = require("../mail/templates/emailVerificationTemplet");
+const Profile = require("../models/Profile");
 // send otp controller
 
 exports.SendOtp = async (req, res) => {
@@ -52,10 +55,12 @@ exports.SendOtp = async (req, res) => {
 
     const otpBody = await OTP.create(Otppayload);
     console.log(otpBody);
-
+    // await mailSender(email, "OTP Verification", otpTemplate(otp));
+    
     res.status(200).json({
       success: true,
       message: "Otp Sent Sucessfully",
+      otp
     });
   } catch (error) {
     console.log(error);
@@ -113,7 +118,7 @@ exports.signUp = async (req, res) => {
     }
     // validate otp
     // else if(otp! == response[0].otp)
-    else if (otp !== recentOtp) {
+    else if (otp !== recentOtp[0].otp) {
       return res.status(400).json({
         success: false,
         message: "OTP Does not match",
@@ -150,6 +155,7 @@ exports.signUp = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "User succesfully registered",
+      user
     });
   } catch (error) {
     console.error(error);

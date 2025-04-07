@@ -107,7 +107,7 @@ exports.showAllCourses = async (req,res) =>{
 
 // get all course details
 
-const getAllCourseDetails = async (req,res) =>{
+exports.getAllCourseDetails = async (req,res) =>{
     try {
         // fetch course id from req body
         const {courseId} = req.body;

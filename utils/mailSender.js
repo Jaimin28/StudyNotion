@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
+const {otpTemplate} = require("../mail/templates/emailVerificationTemplet");
 
 
 const mailSender = async(email,title,body) =>{
@@ -11,7 +13,7 @@ const mailSender = async(email,title,body) =>{
             }
         })
         let info = await transporter.sendMail({
-            from:'Studynotion',
+            from:'${process.env.MAIL_USER}',
             to:`${email}`,
             subject:`${title}`,
             html:`${body}`

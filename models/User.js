@@ -35,13 +35,13 @@ const Userschema = new mongoose.Schema({
     },
     courses:[
         {
-            type:mongoose.Schema.types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Course",
         }
     ],
     courseProgress:[
         {
-            type:mongoose.Schema.types.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             ref:"CourseProgress"
         }
     ],

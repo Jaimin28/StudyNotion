@@ -50,13 +50,13 @@ router.post("/addSection",auth,isInstructor,createSection);
 // update section
 router.post('/updateSection',auth,isInstructor,updateSection);
 // delete section
-router.post('/deleteSection',auth,isInstructor,deleteSection);
+router.delete('/deleteSection',auth,isInstructor,deleteSection);
 // add subsection
 router.post('/addSubSection',auth,isInstructor,createSubsection);
 // update subsection
 router.post('/updateSubSection',auth,isInstructor,updateSubSection);
 // delete Subsection
-router.post('/deleteSubSection',auth,isInstructor,deleteSubSection);
+router.delete('/deleteSubSection',auth,isInstructor,deleteSubSection);
 
 
 
