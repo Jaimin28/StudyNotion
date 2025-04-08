@@ -6,7 +6,7 @@ const {imageUploadToCloudinary} = require("../utils/imageUploader");
 exports.createCourse = async (req,res) =>{
     try {
         // fetch the data from req body
-        const {courseName, courseDescription, WhatYouWillLearn,price,category} = req.body;
+        const {courseName,tag, courseDescription, WhatYouWillLearn,price,category} = req.body;
 
         // validation
         if(!courseName || !courseDescription || !WhatYouWillLearn || !price || !category){
@@ -117,7 +117,7 @@ exports.getAllCourseDetails = async (req,res) =>{
         const courseDetails = await Course.find({_id:courseId}).
                                                                 populate(
                                                                     {
-                                                                        path:"instructor",
+                                                                        path:"Instructor",
                                                                         populate:{
                                                                             path:"additionalDetails",
                                                                         }

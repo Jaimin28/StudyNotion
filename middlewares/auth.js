@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken")
 require("dotenv").config();
 const User=require("../models/User");
-const { decrypt } = require("dotenv");
+ require("dotenv").config();
 // auth
 exports.auth=async (req,res,next) =>{
     try {
         // extract the token
-        const token = req.cookie.token || req.body.token || req.header("Authorisation").replace("Bearer ","");
+        const token = req.cookies.token|| req.body.token || req.header("Authorization").replace("Bearer ","");
         // token missing
         if(!token){
             return res.status(401).json({
@@ -31,7 +31,7 @@ exports.auth=async (req,res,next) =>{
 		next();
     } catch (error) {
         console.error(error);
-        return res.status(400),json({
+        return res.status(400).json({
             success:false,
             message:"something went wrong while validating the token"
             

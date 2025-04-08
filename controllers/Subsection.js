@@ -8,7 +8,7 @@ exports.createSubsection = async (req,res)=> {
     try {
         // fetch the data
         const{title,timeDuration,description,sectionId} = req.body;
-        const video = req.files.VideoFile;
+        const video = req.files?.VideoFile;
         // validate the data
         if(!title || !timeDuration || !description || !sectionId){
             return res.status(404).json({
@@ -67,9 +67,9 @@ exports.updateSubSection = async (req,res) =>{
             })
         };
         // store video to cloudinary
-        if(video){
-            const videoStore = await imageUploadToCloudinary(video,process.env.FOLDER_NAME);
-        }
+
+        const videoStore = await imageUploadToCloudinary(video,process.env.FOLDER_NAME);
+        
         const updatedSubSection = await SubSection.findByIdAndUpdate(subSectionId,
                                                                                 {
                                                                                     title:title,
@@ -81,7 +81,8 @@ exports.updateSubSection = async (req,res) =>{
         );
         return res.status(200).json({
             success:true,
-            message:"SubSection Update Sucsessfully"
+            message:"SubSection Update Sucsessfully",
+            updatedSubSection
         })
     } catch (error) {
         console.log(error);
@@ -98,7 +99,7 @@ exports.updateSubSection = async (req,res) =>{
 exports.deleteSubSection = async (req,res) =>{
     try {
         // fetch SubSection id from req param
-        const {subSectionId} = req.params
+        const { subSectionId } = req.params;
         // validate
         if(!subSectionId) {
             return res.status(401).json({

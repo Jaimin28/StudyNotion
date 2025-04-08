@@ -98,7 +98,8 @@ exports.getAllUserDetails = async (req,res) =>{
         }
         return res.status(200).json({
             success:true,
-            message:"User details fetch succesfully"
+            message:"User details fetch succesfully",
+            userDetails
         }); 
     } catch (error) {
         console.log(error);

@@ -6,7 +6,7 @@ exports.createCategory = async (req,res) =>{
     try {
         // fetch the data from req body
 
-        const{name,description} = req.boyd;
+        const{name,description} = req.body;
         // validate the data
         if(!name || !description){
             return res.status(400).josn({

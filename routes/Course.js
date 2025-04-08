@@ -56,14 +56,14 @@ router.post('/addSubSection',auth,isInstructor,createSubsection);
 // update subsection
 router.post('/updateSubSection',auth,isInstructor,updateSubSection);
 // delete Subsection
-router.delete('/deleteSubSection',auth,isInstructor,deleteSubSection);
+router.delete('/deleteSubSection/:subSectionId', auth, isInstructor, deleteSubSection);
 
 
 
 // show all course
 router.get('/showAllCourse',showAllCourses);
 // get course details
-router.get('/getCourseDetails',getAllCourseDetails);
+router.post('/getCourseDetails',getAllCourseDetails);
 
 
 // create category which only done by admin
