@@ -24,7 +24,8 @@ exports.createCategory = async (req,res) =>{
         // return response
         res.status(200).json({
             success:true,
-            message:"Category succesfully created"
+            message:"Category succesfully created",
+            CategoryDetails
         })
     } catch (error) {
         console.log(error);
@@ -62,10 +63,15 @@ exports.showAllCategory = async (req,res) =>{
 exports.categoryPageDetails = async (req,res)=>{
     try {
         // get category id
-        const categoryId= req.body;
+        const {categoryId}= req.body;
+        console.log(categoryId);
+        console.log("typeof categoryId:", typeof categoryId);
+        console.log("categoryId:", categoryId);
+
+        
 
         // get courses for specified category id
-        const selectedCategory = await Category.findById(categoryId).populate("courses").exec();
+        const selectedCategory = await Category.findById(categoryId).populate("course").exec();
         // validation
         if(!selectedCategory){
             return res.status(404).json({
@@ -74,7 +80,7 @@ exports.categoryPageDetails = async (req,res)=>{
             })
         };
         // get courses for different categories
-        const differentCategories = await Category.findById({_id:{$ne: categoryId}}).populate("courses").exec();
+        const differentCategories = await Category.find({_id:{$ne: categoryId}}).populate("course").exec();
 
         // get top selling course
         return res.status(200).json({

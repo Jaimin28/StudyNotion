@@ -90,7 +90,7 @@ exports.deleteSection = async (req,res) =>{
         const {sectionId} = req.params;
         // validate the data
         if(!sectionId){
-            return res.status(402).json({
+            return res.status(400).json({
                 success:false,
                 message:"All field are required"
             })
@@ -104,7 +104,7 @@ exports.deleteSection = async (req,res) =>{
         })
     } catch (error) {
         console.log(error);
-        return re.status(403).json({
+        return res.status(403).json({
             success:false,
             message:"Error occur while deleting section"
         })
